@@ -14,4 +14,4 @@ RUN pip install --upgrade pip && pip install -r requirements.txt
 
 COPY . .
 
-CMD gunicorn CORE.wsgi:application --bind 0.0.0.0:$PORT
+CMD gunicorn CORE.wsgi:application --bind 0.0.0.0:8000

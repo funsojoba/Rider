@@ -1,36 +1,40 @@
-version: '3'
-
 services:
   web:
-    build: . 
+    build: .
     command: python manage.py runserver 0.0.0.0:8000
+    restart: always
     volumes:
       - .:/app
     ports:
       - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      - CELERY_BROKER=${CELERY_BROKER_URL}
+      - CELERY_BACKEND=${CELERY_BROKER_URL}
+    env_file:
+      - .env
+    stdin_open: true
+    tty: true
 
-  postgres:
+  db:
     image: postgres:12
     container_name: rider_postgres
     environment:
-      - POSTGRES_USER=rider_user
-      - POSTGRES_PASSWORD=rider_password
-      - POSTGRES_DBNAME=rider_db
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASS}
+      - POSTGRES_DB=${POSTGRES_DB}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
       - "5433:5432"
-    
-    # env_file:
-    # - path: ./.env
-    #   required: true
 
   redis:
     image: redis:6.2
     ports:
       - "6379:6379"
     volumes:
-      - redis_data:/data  
+      - redis_data:/data
 
   celery:
     build: .
@@ -55,9 +59,9 @@ services:
       - ./:/app
     depends_on:
       - web
-      - postgres
+      - db
       - redis
 
 volumes:
-  postgres_data:  
-  redis_data:  
+  postgres_data:
+  redis_data:
