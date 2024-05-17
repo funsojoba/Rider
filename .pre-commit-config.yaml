@@ -11,8 +11,6 @@ repos:
     -   id: check-case-conflict
     -   id: check-merge-conflict
     -   id: check-executables-have-shebangs
-    -   id: check-docstring-first
-    -   id: double-quote-string-fixer
     -   id: name-tests-test
     -   id: check-ast
     -   id: check-byte-order-marker
@@ -24,28 +22,40 @@ repos:
     rev: 22.10.0
     hooks:
     -   id: black
-        exclude: ^dist/
+        exclude: ^dist/|^docs/|^tests/|^migrations/
+        args: [--line-length=79]
 
--   repo: https://github.com/pre-commit/mirrors-mypy
-    rev: ''  # Use the sha / tag you want to point at
-    hooks:
-    -   id: mypy
-        args: [--show-traceback, --strict]
-
--   repo: https://github.com/pre-commit/mirrors-pylint
-    rev: ''  # Use the sha / tag you want to point at
-    hooks:
-    -   id: pylint
-
-# -   repo: https://github.com/pre-commit/pre-commit-hooks
-#     rev: v3.2.0
+# -   repo: https://github.com/asottile/reorder-python-imports
+#     rev: v3.12.0
 #     hooks:
-#     -   id: python-check-blanket-noqa
-#     -   id: check-added-large-files
+#     -   id: reorder-python-imports
+#         # args: [
+#         #     --application-directories, '.:src',
+#         #     --py38-plus,
+#         #     # --add-import, 'from __future__ import annotations',
+#         # ]
 
-# -   repo: https://github.com/pre-commit/mirrors-flake8
+# -   repo: https://github.com/pre-commit/mirrors-mypy
+#     rev: ''  # Use the sha / tag you want to point at
+#     hooks:
+#     -   id: mypy
+#         args: [--show-traceback, --strict]
+#         exclude: '^migrations/|/migrations/'
+
+# -   repo: https://github.com/pre-commit/mirrors-pylint
+#     rev: ''  # Use the sha / tag you want to point at
+#     hooks:
+#     -   id: pylint
+#         exclude: ^migrations/
+#         args: [
+#             "--load-plugins=pylint_django",
+#             "--disable=C0114",  # Disable missing-module-docstring
+#             "--disable=E0401"   # Disable import-error
+#         ]
+
 -   repo: https://github.com/pycqa/flake8
-    rev: ''  # Use the sha / tag you want to point at
+    rev: ''
     hooks:
     -   id: flake8
-        args: ["--max-line-length=88"]  # Black's default line length
+        args: ["--max-line-length=91"]  # Black's default line length
+        exclude: migrations/

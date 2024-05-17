@@ -1,5 +1,12 @@
-from decouple import config
+"""
+    Django Settings
+"""
+from __future__ import annotations
+
 from pathlib import Path
+from typing import List
+
+from decouple import config  # noqa
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -14,9 +21,9 @@ SECRET_KEY = config("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS: list[str] = []
+ALLOWED_HOSTS: List[str] = []
 
-# AUTH_USER_MODEL = 'AUTHENTICATION.User'
+AUTH_USER_MODEL = "AUTHENTICATION.User"
 
 
 # Application definition
@@ -28,13 +35,15 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "AUTHENTICATION",
+    # installed apps
     "drf_yasg",
     "corsheaders",
     "rest_framework",
     "django_celery_beat",
     "django_celery_results",
     "rest_framework_simplejwt",
+    # local apps
+    "AUTHENTICATION",
 ]
 
 MIDDLEWARE = [
