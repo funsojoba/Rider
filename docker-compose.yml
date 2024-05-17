@@ -49,6 +49,10 @@ services:
     depends_on:
       - web
       - redis
+    environment:
+      - CELERY_BROKER_URL=${CELERY_BROKER_URL}
+    env_file:
+      - .env
 
   celery_beat:
     build: .
@@ -66,6 +70,17 @@ services:
       - web
       - db
       - redis
+    environment:
+      - CELERY_BROKER_URL=${CELERY_BROKER_URL}
+    env_file:
+      - .env
+
+  mailhog:
+    image: mailhog/mailhog:latest
+    restart: always
+    ports:
+      - 1025:1025
+      - 8025:8025
 
 volumes:
   postgres_data:
