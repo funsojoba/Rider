@@ -168,3 +168,5 @@ CACHES = {
         "OPTIONS": {"CLIENT_CLASS": "django_redis.client.DefaultClient"},
     }
 }
+
+ENVIRONMENT = config("ENV", default="development")

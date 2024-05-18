@@ -7,7 +7,7 @@ from django.contrib.auth.hashers import check_password
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from helpers.generate_otp import get_otp
+# from helpers.generate_otp import get_otp
 from helpers.cache_manager import CacheManager
 from helpers.response import Response
 
@@ -17,7 +17,7 @@ from .serializers import UserSerializer
 class AuthenticationService:
     @classmethod
     def _create_user(cls, user_type, **kwargs) -> User:
-        otp = get_otp()
+        # otp = get_otp()
         password = kwargs.get("password")
 
         user = User.objects.create(
@@ -35,11 +35,11 @@ class AuthenticationService:
         user.save()
 
         # TODO: hash OTP before passing to cache
-        CacheManager.set_key(
-            f"user:otp:{otp}",
-            {"email": user.email},
-            86400,
-        )
+        # CacheManager.set_key(
+        #     f"user:otp:{otp}",
+        #     {"email": user.email},
+        #     86400,
+        # )
         # EmailService.send_async(
         #     template="verify_signup.html",
         #     subject="Verify Account",

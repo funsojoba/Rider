@@ -6,6 +6,11 @@ from .models import User
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        write_only_fields = ["password"]
-        readonly_fields = ["id"]
+        read_only_fields = ["id"]
         exclude = ["avatar"]
+        extra_kwargs = {"password": {"write_only": True}}
+
+
+class LoginSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    password = serializers.CharField()
