@@ -41,4 +41,5 @@ urlpatterns = [
         name="schema-swagger-ui",
     ),
     path("api/v1/auth/", include("AUTHENTICATION.urls")),
+    path("api/v1/driver/", include("Driver.urls")),
 ]

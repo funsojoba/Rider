@@ -1,17 +1,20 @@
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from helpers.response import Response
 
-from AUTHENTICATION.serializers import (
-    UserSerializer,
-    LoginSerializer,
-    RiderCarSerializer,
-)
+from AUTHENTICATION.serializers import UserSerializer, LoginSerializer
 from AUTHENTICATION.service import AuthenticationService
 
 
 class AuthViewSet(viewsets.ViewSet):
-    @action(methods=["POST"], detail=False)
+    @swagger_auto_schema(
+        operation_description="Sign Up User",
+        operation_summary="Sign Up User",
+        tags=["Auth"],
+        request_body=UserSerializer,
+    )
+    @action(methods=["POST"], detail=False, url_path="sign-up")
     def sign_up_user(self, request):
         serializer = UserSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -31,7 +34,13 @@ class AuthViewSet(viewsets.ViewSet):
             status=status.HTTP_201_CREATED,
         )
 
-    @action(methods=["POST"], detail=False)
+    @swagger_auto_schema(
+        operation_description="Log In User",
+        operation_summary="Log In User",
+        tags=["Auth"],
+        request_body=LoginSerializer,
+    )
+    @action(methods=["POST"], detail=False, url_path="login")
     def login_user(self, request):
         serializer = LoginSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -41,14 +50,3 @@ class AuthViewSet(viewsets.ViewSet):
             password=serializer.validated_data["password"],
         )
         return login_user
-
-    @action(methods=["POST"], detail=False)
-    def setup_rider_car_details(self, request):
-        serializer = RiderCarSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        rider_car = AuthenticationService.setup_rider_car_details(
-            **serializer.validated_data
-        )
-        return Response(
-            data=RiderCarSerializer(rider_car).data, status=status.HTTP_200_OK
-        )
