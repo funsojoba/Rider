@@ -63,15 +63,17 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     phone_number = models.CharField(max_length=150)
     avatar = models.URLField(null=True, blank=True)
+
     city = models.CharField(max_length=256)
     state = models.CharField(max_length=256)
     country = models.CharField(max_length=256)
+
     user_type = models.CharField(
         choices=USER_TYPE, max_length=300, default="USER"
     )
     rating = models.FloatField(default=0)
-    is_rider_car_setup = models.BooleanField(default=False)
 
+    # user current location
     location = gis_models.PointField(null=True, blank=True)
 
     is_staff = models.BooleanField(default=False)
@@ -95,32 +97,43 @@ class User(AbstractBaseUser, PermissionsMixin):
         return self.display_name
 
 
-class RiderCar(models.Model):
+class RideDriver(models.Model):
     id = models.CharField(
         primary_key=True, editable=False, default=generate_id, max_length=70
     )
-    rider = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="cars"
+    driver = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="ride_driver"
     )
+    drivers_license_picture = models.URLField(null=True, blank=True)
+    drivers_license_number = models.CharField(
+        max_length=256, null=True, blank=True
+    )
+    is_drivers_licence_valid = models.BooleanField(default=False)
+
+    # driver's physical address
+    home_address = models.CharField(max_length=256, null=True, blank=True)
+
+    # driver's car details
     car_number = models.CharField(max_length=256, null=True, blank=True)
     car_model = models.CharField(max_length=256, null=True, blank=True)
     car_color = models.CharField(max_length=256, null=True, blank=True)
     car_plate_number = models.CharField(max_length=256, null=True, blank=True)
     car_picture = models.URLField(null=True, blank=True)
     car_year = models.CharField(max_length=256, null=True, blank=True)
+    is_rider_car_setup = models.BooleanField(default=False)
+
+    is_driver_verified = models.BooleanField(default=False)
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.rider.first_name} {self.rider.last_name} | {self.car_number}"
-
-
-# create signal to create RiderCar on User creation
+        return "DRIVER - " + self.driver.display_name
 
 
 @receiver(post_save, sender=User)
 def _post_save_receiver(sender, instance, created, **kwargs):
     if created and instance.user_type == UserTypes.RIDER.value:
-        user_rider = RiderCar.objects.filter(rider=instance).first()
+        user_rider = RideDriver.objects.filter(rider=instance).first()
         if not user_rider:
-            RiderCar.objects.create(rider=instance)
+            RideDriver.objects.create(driver=instance)
