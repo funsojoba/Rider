@@ -1,3 +1,4 @@
+
 services:
   web:
     build: .
@@ -7,23 +8,23 @@ services:
       - .:/app
     ports:
       - "8000:8000"
-    develop:
-      watch:
-        - action: sync
-          path: ./CORE
-          target: /app
     depends_on:
+      - db
+    links:
       - db
     environment:
       - CELERY_BROKER=${CELERY_BROKER_URL}
       - CELERY_BACKEND=${CELERY_BROKER_URL}
+      - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASS}@db:5432/${POSTGRES_DB}
     env_file:
       - .env
     stdin_open: true
     tty: true
+    networks:
+      - rider_network
 
   db:
-    image: postgres:12
+    image: postgis/postgis:13-3.1
     container_name: rider_postgres
     environment:
       - POSTGRES_USER=${POSTGRES_USER}
@@ -33,6 +34,8 @@ services:
       - postgres_data:/var/lib/postgresql/data
     ports:
       - "5433:5432"
+    networks:
+      - rider_network
 
   redis:
     image: redis:6.2
@@ -49,31 +52,42 @@ services:
     depends_on:
       - web
       - redis
+    links:
+      - web
+      - redis
+    networks:
+      - rider_network
     environment:
       - CELERY_BROKER_URL=${CELERY_BROKER_URL}
     env_file:
       - .env
 
-  celery_beat:
-    build: .
-    command:
-      [
-        'celery',
-        '--app=CORE',
-        'beat',
-        '--scheduler=django_celery_beat.schedulers:DatabaseScheduler',
-        '--loglevel=INFO',
-      ]
-    volumes:
-      - ./:/app
-    depends_on:
-      - web
-      - db
-      - redis
-    environment:
-      - CELERY_BROKER_URL=${CELERY_BROKER_URL}
-    env_file:
-      - .env
+  # celery_beat:
+  #   build: .
+  #   command:
+  #     [
+  #       'celery',
+  #       '--app=CORE',
+  #       'beat',
+  #       '--scheduler=django_celery_beat.schedulers:DatabaseScheduler',
+  #       '--loglevel=INFO',
+  #     ]
+  #   volumes:
+  #     - ./:/app
+  #   networks:
+  #     - rider_network
+  #   links:
+  #     - web
+  #     - db
+  #     - redis
+  #   depends_on:
+  #     - web
+  #     - db
+  #     - redis
+  #   environment:
+  #     - CELERY_BROKER_URL=${CELERY_BROKER_URL}
+  #   env_file:
+  #     - .env
 
   mailhog:
     image: mailhog/mailhog:latest
@@ -85,3 +99,7 @@ services:
 volumes:
   postgres_data:
   redis_data:
+
+networks:
+  rider_network:
+    driver: bridge

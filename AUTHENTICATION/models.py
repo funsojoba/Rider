@@ -1,19 +1,29 @@
 from __future__ import annotations
 
 import uuid
-
+from enum import Enum
+from django.dispatch import receiver
+from django.db.models.signals import post_save
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractBaseUser
 from django.contrib.auth.models import PermissionsMixin
+
 from django.db import models
 
 # from helpers.db_helper import BaseAbstractModel
 
-# from django_location_field.models import LocationField
+from django.contrib.gis.db import models as gis_models
 
 
 def generate_id():
     return uuid.uuid4().hex
+
+
+class UserTypes(Enum):
+    ADMIN = "ADMIN"
+    RIDER = "RIDER"
+    USER = "USER"
+    SUPER_ADMIN = "SUPER_ADMIN"
 
 
 class UserManager(BaseUserManager):
@@ -59,8 +69,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     user_type = models.CharField(
         choices=USER_TYPE, max_length=300, default="USER"
     )
+    rating = models.FloatField(default=0)
+    is_rider_car_setup = models.BooleanField(default=False)
 
-    # user_location = LocationField(blank=True, null=True)
+    location = gis_models.PointField(null=True, blank=True)
 
     is_staff = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)
@@ -81,3 +93,34 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.display_name
+
+
+class RiderCar(models.Model):
+    id = models.CharField(
+        primary_key=True, editable=False, default=generate_id, max_length=70
+    )
+    rider = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="cars"
+    )
+    car_number = models.CharField(max_length=256, null=True, blank=True)
+    car_model = models.CharField(max_length=256, null=True, blank=True)
+    car_color = models.CharField(max_length=256, null=True, blank=True)
+    car_plate_number = models.CharField(max_length=256, null=True, blank=True)
+    car_picture = models.URLField(null=True, blank=True)
+    car_year = models.CharField(max_length=256, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.rider.first_name} {self.rider.last_name} | {self.car_number}"
+
+
+# create signal to create RiderCar on User creation
+
+
+@receiver(post_save, sender=User)
+def _post_save_receiver(sender, instance, created, **kwargs):
+    if created and instance.user_type == UserTypes.RIDER.value:
+        user_rider = RiderCar.objects.filter(rider=instance).first()
+        if not user_rider:
+            RiderCar.objects.create(rider=instance)

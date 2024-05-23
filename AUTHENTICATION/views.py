@@ -2,7 +2,11 @@ from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from helpers.response import Response
 
-from AUTHENTICATION.serializers import UserSerializer, LoginSerializer
+from AUTHENTICATION.serializers import (
+    UserSerializer,
+    LoginSerializer,
+    RiderCarSerializer,
+)
 from AUTHENTICATION.service import AuthenticationService
 
 
@@ -12,9 +16,16 @@ class AuthViewSet(viewsets.ViewSet):
         serializer = UserSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        user = AuthenticationService.create_viewer_user(
-            **serializer.validated_data
-        )
+        user_type = serializer.validated_data.pop("user_type")
+
+        if user_type == "RIDER":
+            user = AuthenticationService.create_rider_user(
+                **serializer.validated_data
+            )
+        else:
+            user = AuthenticationService.create_customer_user(
+                **serializer.validated_data
+            )
         return Response(
             data=UserSerializer(instance=user).data,
             status=status.HTTP_201_CREATED,
@@ -30,3 +41,14 @@ class AuthViewSet(viewsets.ViewSet):
             password=serializer.validated_data["password"],
         )
         return login_user
+
+    @action(methods=["POST"], detail=False)
+    def setup_rider_car_details(self, request):
+        serializer = RiderCarSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        rider_car = AuthenticationService.setup_rider_car_details(
+            **serializer.validated_data
+        )
+        return Response(
+            data=RiderCarSerializer(rider_car).data, status=status.HTTP_200_OK
+        )

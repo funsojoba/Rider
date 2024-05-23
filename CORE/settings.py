@@ -36,14 +36,17 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     # installed apps
+    "django.contrib.gis",
     "drf_yasg",
     "corsheaders",
     "rest_framework",
     "django_celery_beat",
     "django_celery_results",
     "rest_framework_simplejwt",
+    "rest_framework_gis",
     # local apps
     "AUTHENTICATION",
+    "Ride",
 ]
 
 MIDDLEWARE = [
@@ -80,17 +83,10 @@ WSGI_APPLICATION = "CORE.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-
-
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql",
+        # "ENGINE": "django.db.backends.postgresql",
+        "ENGINE": "django.contrib.gis.db.backends.postgis",
         "NAME": config("POSTGRES_DB"),
         "USER": config("POSTGRES_USER"),
         "PASSWORD": config("POSTGRES_PASS"),

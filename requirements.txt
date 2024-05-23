@@ -17,6 +17,7 @@ django-cors-headers==4.3.1
 django-restframework==0.0.1
 djangorestframework==3.15.1
 djangorestframework-simplejwt==5.3.1
+djangorestframework-gis==1.0
 drf-yasg==1.21.7
 hyperlink==21.0.0
 idna==3.7

@@ -1,5 +1,5 @@
 # import uuid
-from .models import User
+from .models import User, RiderCar
 
 # from django.conf import settings
 from django.contrib.auth.hashers import check_password
@@ -54,13 +54,13 @@ class AuthenticationService:
         return user
 
     @classmethod
-    def create_viewer_user(cls, **kwargs) -> User:
+    def create_customer_user(cls, **kwargs) -> User:
         user = cls._create_user("USER", **kwargs)
         return user
 
     @classmethod
     def create_rider_user(cls, **kwargs) -> User:
-        user = cls._create_user("RIDER", **kwargs)
+        user = cls._create_user(user_type="RIDER", **kwargs)
         return user
 
     @classmethod
@@ -68,6 +68,41 @@ class AuthenticationService:
         user = User.objects.filter(email=email).first()
         user.is_active = True
         user.save()
+
+    @classmethod
+    def setup_rider_car_details(
+        cls, user: User, car_details: dict
+    ) -> RiderCar:
+        rider_car = RiderCar.objects.filter(rider=user).first()
+        if car_details.get("car_picture"):
+            # upload picture to wherever and get the link
+            car_picture = "https://placehold.co/600x400/png"
+        if rider_car:
+            rider_car
+            rider_car.car_number = (car_details.get("car_number"),)
+            rider_car.car_model = (car_details.get("car_model"),)
+            rider_car.car_color = (car_details.get("car_color"),)
+            rider_car.car_plate_number = (car_details.get("car_plate_number"),)
+            rider_car.car_brand = (car_details.get("car_brand"),)
+            rider_car.car_year = (car_details.get("car_year"),)
+            rider_car.car_picture = car_picture
+            rider_car.save()
+
+            user.is_rider_car_setup = True
+            user.save()
+            return rider_car
+        else:
+            rider_car = RiderCar.objects.create(
+                rider=user,
+                car_number=car_details.get("car_number"),
+                car_model=car_details.get("car_model"),
+                car_color=car_details.get("car_color"),
+                car_plate_number=car_details.get("car_plate_number"),
+                car_brand=car_details.get("car_brand"),
+                car_year=car_details.get("car_year"),
+                car_picture=car_picture,
+            )
+            return rider_car
 
     # @classmethod
     # def verify_signed_up_user(cls, email, otp):
