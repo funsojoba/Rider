@@ -4,6 +4,10 @@ from AUTHENTICATION.models import User
 
 class RideDriverService:
     @classmethod
+    def get_driver(cls, user: User) -> RideDriver:
+        return RideDriver.objects.filter(driver=user).first()
+
+    @classmethod
     def setup_driver_details(
         cls, user: User, driver_details: dict
     ) -> RideDriver:

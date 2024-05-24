@@ -61,6 +61,7 @@ class AuthenticationService:
     @classmethod
     def create_rider_user(cls, **kwargs) -> User:
         user = cls._create_user(user_type="RIDER", **kwargs)
+
         return user
 
     @classmethod
@@ -111,7 +112,7 @@ class AuthenticationService:
         return user
 
     @classmethod
-    def get_user(cls, **kwargs):
+    def get_user(cls, **kwargs) -> User:
         return User.objects.filter(**kwargs).first()
 
     @classmethod

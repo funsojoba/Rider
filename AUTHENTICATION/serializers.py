@@ -1,16 +1,59 @@
 from rest_framework import serializers
+from django.contrib.gis.geos import Point
 
 from .models import User
 
 
 class UserSerializer(serializers.ModelSerializer):
+    latitude = serializers.FloatField(write_only=True, required=False)
+    longitude = serializers.FloatField(write_only=True, required=False)
+    location = serializers.SerializerMethodField()
+
     class Meta:
         model = User
-        read_only_fields = ["id"]
-        exclude = [
+        fields = [
+            "id",
+            "first_name",
+            "last_name",
+            "email",
+            "phone_number",
             "avatar",
+            "city",
+            "state",
+            "country",
+            "user_type",
+            "rating",
+            "location",
+            "latitude",
+            "longitude",
+            "is_staff",
+            "is_admin",
+            "is_superuser",
+            "is_active",
+            "created_at",
+            "updated_at",
         ]
-        extra_kwargs = {"password": {"write_only": True}}
+
+    def get_location(self, obj):
+        return (
+            {"latitude": obj.location.y, "longitude": obj.location.x}
+            if obj.location
+            else None
+        )
+
+    def create(self, validated_data):
+        latitude = validated_data.pop("latitude", None)
+        longitude = validated_data.pop("longitude", None)
+        if latitude is not None and longitude is not None:
+            validated_data["location"] = Point(longitude, latitude)
+        return super().create(validated_data)
+
+    def update(self, instance, validated_data):
+        latitude = validated_data.pop("latitude", None)
+        longitude = validated_data.pop("longitude", None)
+        if latitude is not None and longitude is not None:
+            instance.location = Point(longitude, latitude)
+        return super().update(instance, validated_data)
 
 
 class LoginSerializer(serializers.Serializer):

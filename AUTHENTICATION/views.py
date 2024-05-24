@@ -21,14 +21,13 @@ class AuthViewSet(viewsets.ViewSet):
 
         user_type = serializer.validated_data.pop("user_type")
 
-        if user_type == "RIDER":
-            user = AuthenticationService.create_rider_user(
-                **serializer.validated_data
-            )
-        else:
-            user = AuthenticationService.create_customer_user(
-                **serializer.validated_data
-            )
+        switcher = {
+            "RIDER": AuthenticationService.create_rider_user,
+            "CUSTOMER": AuthenticationService.create_customer_user,
+        }
+        user = switcher.get(user_type, lambda: None)(
+            **serializer.validated_data
+        )
         return Response(
             data=UserSerializer(instance=user).data,
             status=status.HTTP_201_CREATED,
@@ -50,3 +49,16 @@ class AuthViewSet(viewsets.ViewSet):
             password=serializer.validated_data["password"],
         )
         return login_user
+
+    @swagger_auto_schema(
+        operation_description="Get User Details",
+        operation_summary="Get User Details",
+        tags=["Auth"],
+    )
+    @action(methods=["GET"], detail=False, url_path="me")
+    def get_user(self, request):
+        AuthenticationService.get_user(id=request.user.id)
+        return Response(
+            data=UserSerializer(instance=request.user).data,
+            status=status.HTTP_200_OK,
+        )
