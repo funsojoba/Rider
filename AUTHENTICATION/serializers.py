@@ -3,11 +3,17 @@ from django.contrib.gis.geos import Point
 
 from .models import User
 
+from User.service import UserService
+
 
 class UserSerializer(serializers.ModelSerializer):
     latitude = serializers.FloatField(write_only=True, required=False)
     longitude = serializers.FloatField(write_only=True, required=False)
     location = serializers.SerializerMethodField()
+    rating = serializers.SerializerMethodField()
+
+    def get_rating(self, obj):
+        return UserService.get_user_rating(obj).get("rating")
 
     class Meta:
         model = User
@@ -57,6 +63,11 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class MinimalUserSerializer(serializers.ModelSerializer):
+    rating = serializers.SerializerMethodField()
+
+    def get_rating(self, obj):
+        return UserService.get_user_rating(obj).get("rating")
+
     class Meta:
         model = User
         fields = [

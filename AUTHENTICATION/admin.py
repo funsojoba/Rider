@@ -7,7 +7,7 @@ class UserAdmin(admin.ModelAdmin):
     list_display = (
         "display_name",
         "email",
-        "rating",
+        # "rating",
         "user_type",
         "is_active",
         "is_superuser",

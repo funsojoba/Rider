@@ -69,7 +69,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     user_type = models.CharField(
         choices=USER_TYPE, max_length=300, default="USER"
     )
-    rating = models.FloatField(default=0)
 
     # user current location
     location = gis_models.PointField(

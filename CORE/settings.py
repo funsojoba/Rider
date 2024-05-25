@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     "AUTHENTICATION",
     "Ride",
     "Driver",
+    "User",
 ]
 
 MIDDLEWARE = [

@@ -49,16 +49,3 @@ class AuthViewSet(viewsets.ViewSet):
             password=serializer.validated_data["password"],
         )
         return login_user
-
-    @swagger_auto_schema(
-        operation_description="Get User Details",
-        operation_summary="Get User Details",
-        tags=["Auth"],
-    )
-    @action(methods=["GET"], detail=False, url_path="me")
-    def get_user(self, request):
-        AuthenticationService.get_user(id=request.user.id)
-        return Response(
-            data=UserSerializer(instance=request.user).data,
-            status=status.HTTP_200_OK,
-        )
