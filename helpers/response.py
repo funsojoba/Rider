@@ -16,9 +16,9 @@ class Response:
     def format(cls, data, errors):
         data, errors = cls.validate(data, errors)
 
-        message = "success" if data and not errors else "failure"
+        message = "success" if data is not None and not errors else "failure"
 
-        if not data and not errors:
+        if data is None and not errors:
             raise InvalidResponse("Both data and errors cannot be None")
 
         return dict(
@@ -30,7 +30,7 @@ class Response:
     @classmethod
     def validate(cls, data, errors):
         try:
-            data = None if data is None else dict(data)
+            data = None if data is None else data  # dict(data)
             errors = None if errors is None else dict(errors)
             return (data, errors)
         except Exception:

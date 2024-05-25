@@ -72,7 +72,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     rating = models.FloatField(default=0)
 
     # user current location
-    location = gis_models.PointField(null=True, blank=True)
+    location = gis_models.PointField(
+        geography=True, srid=4326, null=True, blank=True
+    )
 
     is_staff = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)

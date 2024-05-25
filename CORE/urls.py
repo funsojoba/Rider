@@ -42,4 +42,5 @@ urlpatterns = [
     ),
     path("api/v1/auth/", include("AUTHENTICATION.urls")),
     path("api/v1/driver/", include("Driver.urls")),
+    path("api/v1/ride/", include("Ride.urls")),
 ]
