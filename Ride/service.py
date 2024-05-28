@@ -10,6 +10,32 @@ User = get_user_model()
 
 
 class RideService:
+    """_summary_
+
+    RIDE FLOW
+    - Get current location (update user current location)
+    - Select destination
+    - Get nearby drivers
+    - Select a driver
+    - Driver is notified
+    - Driver accepts / rejects
+    - Customer is notified
+    - Driver drives to customer location
+    - Driver starts trip
+    - Calculate trip cost based on
+        - distance
+        - time
+        - surge (etc.)
+    - Notify customer of price at different milestone
+    - End trip
+    - Customer pays
+    - Customer rates driver
+    - Driver rates customer
+
+    - Can't book a ride if you're already in a ride
+    - Can't see a driver if driver is already in a ride
+    """
+
     @classmethod
     def get_customer_rides(cls, user: User):
         return Ride.objects.filter(
@@ -26,7 +52,7 @@ class RideService:
     def get_nearby_driver(cls, location: dict):
 
         user_point = Point(
-            location.get("longitue"), location.get("latitude"), srid=4326
+            float(location.get("long")), float(location.get("lat")), srid=4326
         )
         drivers = (
             RideDriver.objects.filter(

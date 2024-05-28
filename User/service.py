@@ -1,6 +1,7 @@
 from rest_framework import status
 
 from django.db.models import Sum, Count
+from django.contrib.gis.geos import Point
 
 from AUTHENTICATION.models import User
 
@@ -62,3 +63,11 @@ class UserService:
         average_rating = total_rating / count_rating if count_rating else 0
 
         return {"rating": average_rating}
+
+    @classmethod
+    def update_user_locatio(cls, location: dict, user: User) -> None:
+        user_point = Point(
+            float(location.get("long")), float(location.get("lat")), srid=4326
+        )
+        user = User.location = user_point
+        user.save()

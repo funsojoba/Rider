@@ -152,6 +152,10 @@ class AuthenticationService:
         return False
 
     @classmethod
+    def get_user(cls, email: str) -> User:
+        return User.objects.filter(email=email).first()
+
+    @classmethod
     def login_user(cls, email, password):
         user = cls.get_user(email=email)
 

@@ -35,6 +35,7 @@ class CustomerRideViewSet(ViewSet):
     @action(methods=["GET"], detail=False, url_path="nearby-drivers")
     def get_nearby_drivers(self, request):
         location = request.query_params.dict()
+
         drivers = RideService.get_nearby_driver(location=location)
         return Response(
             data=RideSerializer(drivers, many=True).data,
