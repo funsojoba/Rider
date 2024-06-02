@@ -9,6 +9,18 @@ from User.models import UserRating
 from helpers.exceptions import CustomApiException
 
 
+"""
+START A TRIP
+ - Payload
+    - start_location
+    - destination
+    - user (customer)
+    - driver
+    - start_time
+
+"""
+
+
 class UserService:
     @classmethod
     def get_user(cls, **kwargs) -> User:
