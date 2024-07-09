@@ -28,6 +28,8 @@ class Ride(BaseAbstractModel):
     base_fare = models.FloatField(verbose_name="trip cost", default=0)
     distance = models.FloatField(verbose_name="distance")
     trip_time = models.DurationField(verbose_name="trip time")
+    trip_start_time = models.DateTimeField(null=True, blank=True)
+    trip_end_time = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.id}"

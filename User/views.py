@@ -52,3 +52,4 @@ class UserViewSet(viewsets.ViewSet):
             data=user_rating,
             status=status.HTTP_200_OK,
         )
+    

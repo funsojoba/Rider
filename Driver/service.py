@@ -58,3 +58,8 @@ class RideDriverService:
                 car_picture=car_picture,
             )
             return rider_car
+
+    @classmethod
+    def get_driver_by_id(cls, driver_id):
+        return RideDriver.objects.filter(id=driver_id).first()
+        

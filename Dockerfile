@@ -1,4 +1,4 @@
-FROM python:3.8.0-slim as builder
+FROM python:3.11.6-slim-bullseye as python
 
 # Set the working directory
 WORKDIR /app
@@ -20,7 +20,7 @@ RUN apt-get update && apt-get install -y \
     postgresql-contrib \
     postgis \
     wget \
-    wkhtmltopdf \
+    # wkhtmltopdf \
     gdal-bin \
     libgdal-dev \
     libgeos-dev \
@@ -34,7 +34,8 @@ RUN apt-get update && apt-get install -y \
 
 
 # Install Python packages
-RUN pip install --upgrade pip && pip install -r requirements.txt
+RUN pip install --upgrade pip \
+    pip install -r requirements.txt
 
 # Copy the rest of the application code
 COPY . .

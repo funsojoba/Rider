@@ -27,7 +27,7 @@ class UserService:
         return User.objects.filter(**kwargs).first()
 
     @classmethod
-    def update_user(cls, user, **kwargs):
+    def update_user(cls, user: User, **kwargs) -> User:
         avatar = kwargs.get("avatar")
         user.first_name = kwargs.get("first_name", user.first_name)
         user.last_name = kwargs.get("last_name", user.last_name)
@@ -65,7 +65,7 @@ class UserService:
         return rating
 
     @classmethod
-    def get_user_rating(cls, user: User) -> UserRating:
+    def get_user_rating(cls, user: User) -> dict:
         user_rating = UserRating.objects.filter(user=user).aggregate(
             total_rating=Sum("rating"), count_rating=Count("rating")
         )
@@ -77,7 +77,7 @@ class UserService:
         return {"rating": average_rating}
 
     @classmethod
-    def update_user_locatio(cls, location: dict, user: User) -> None:
+    def update_user_location(cls, location: dict, user: User) -> None:
         user_point = Point(
             float(location.get("long")), float(location.get("lat")), srid=4326
         )
