@@ -17,4 +17,11 @@ This is a Ride hailing app that allows users to request for a ride and drivers t
 - Run `make build` to build the docker image
 - Run `make up` to start the containers
 
-Happy Hacking :sunglasses:
+## Further information
+- Other management commands are provided in the `Makefile`
+- You can access the email server at `http://localhost:8025`
+- You can access the admin panel at `http://localhost:8000/admin`
+- You can access the API documentation at `http://localhost:8000/`
+
+
+Happy Hacking  🚀

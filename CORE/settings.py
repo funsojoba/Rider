@@ -88,7 +88,6 @@ WSGI_APPLICATION = "CORE.wsgi.application"
 
 DATABASES = {
     "default": {
-        # "ENGINE": "django.db.backends.postgresql",
         "ENGINE": "django.contrib.gis.db.backends.postgis",
         "NAME": config("POSTGRES_DB"),
         "USER": config("POSTGRES_USER"),

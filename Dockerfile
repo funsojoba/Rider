@@ -25,16 +25,12 @@ RUN apt-get update && apt-get install -y \
     libgdal-dev \
     libgeos-dev \
     --no-install-recommends && \
-    # Install GDAL
-    # binutils \
-    # libproj-dev \
-    # python-gdal python3-gdal \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
 
 # Install Python packages
-RUN pip install --upgrade pip \
+RUN pip install --upgrade pip  &&\
     pip install -r requirements.txt
 
 # Copy the rest of the application code
