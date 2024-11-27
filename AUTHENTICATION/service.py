@@ -35,17 +35,17 @@ class AuthenticationService:
         user.save()
 
         # TODO: hash OTP before passing to cache
-        # CacheManager.set_key(
-        #     f"user:otp:{otp}",
-        #     {"email": user.email},
-        #     86400,
-        # )
-        # EmailService.send_async(
-        #     template="verify_signup.html",
-        #     subject="Verify Account",
-        #     recipients=[user.email],
-        #     context={"first_name": user.first_name, "otp": otp},
-        # )
+        CacheManager.set_key(
+            f"user:otp:{otp}",
+            {"email": user.email},
+            86400,
+        )
+        EmailService.send_async(
+            template="verify_signup.html",
+            subject="Verify Account",
+            recipients=[user.email],
+            context={"first_name": user.first_name, "otp": otp},
+        )
         return UserSerializer(instance=user).data
 
     @classmethod
