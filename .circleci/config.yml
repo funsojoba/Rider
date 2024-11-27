@@ -27,7 +27,9 @@ jobs:
             EMAIL_HOST: EMAIL_HOST
             EMAIL_PORT: EMAIL_PORT
             EMAIL_FROM: EMAIL_FROM
-          command: python manage.py test
+          # run pip install -r requirements.txt 
+          command: pip install -r requirements.txt && python manage.py test
+          # command: python manage.py test
   deploy:
     # This is an example deploy job, not actually used by the workflow
     docker:
