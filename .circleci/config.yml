@@ -13,6 +13,20 @@ jobs:
       - python/install-packages
       - run:
           name: Run tests
+          environment:
+            DJANGO_SETTINGS_MODULE: config.settings.test
+            SECRET_KEY: SECRET_KEY
+            POSTGRES_USER: POSTGRES_USER
+            POSTGRES_PASS: POSTGRES_PASS
+            POSTGRES_DB: POSTGRES_DB
+            PG_HOST: PG_HOST
+            PG_PORT: PG_PORT
+            ENV: ENV
+            CELERY_BROKER_URL: CELERY_BROKER_URL
+            REDIS_URL: REDIS_URL
+            EMAIL_HOST: EMAIL_HOST
+            EMAIL_PORT: EMAIL_PORT
+            EMAIL_FROM: EMAIL_FROM
           command: python manage.py test
   deploy:
     # This is an example deploy job, not actually used by the workflow
